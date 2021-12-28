@@ -108,9 +108,7 @@ async def autoplay():
             syvod.localChanged = False
             db.UpdateLocal()
 
-        await asyncio.sleep(1)
-        if syvod.playlist: continue
-        await asyncio.sleep(1)
+        await asyncio.sleep(2)
         if syvod.playlist: continue
 
         local = []
@@ -118,6 +116,7 @@ async def autoplay():
             if row[db.idxLocalID] > 0: local.append(row[db.idxLocalID])
 
         await syvod.call('*,' + str(random.choice(local)))
+        await asyncio.sleep(10)
 
 async def init():
     asyncio.create_task(syvod.run())

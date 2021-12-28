@@ -28,7 +28,7 @@ async def run():
         sock = None
         try:
             r, w = await asyncio.open_connection(myip, 7888)
-        except Exception as e:
+        except ConnectionError as e:
             log(str(e))
             await asyncio.sleep(5)
             continue
@@ -40,6 +40,8 @@ async def run():
             try:
                 msg = str((await r.readuntil(EOM))[:-2], 'utf-8')
             except asyncio.IncompleteReadError as e:
+                break
+            except ConnectionError as e:
                 break
 
             #print('<', msg)

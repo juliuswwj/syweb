@@ -4,7 +4,7 @@
 3. 运行Syvod\VODManager登录VOD系统并配置。运行Syvod\Syvod确定系统能正常运行
 4. 安装GIT PYTHON3 PIP，注意在PATH环境中加入对应二进制目录
 5. 运行 `pip install aiohttp pyodbc` 安装依赖模块
-6. 在C:\Syvod目录下执行 `git clone https://github.com/juliuswwj/syweb`
+6. 在C:\Syvod目录下执行 `git clone https://github.com/juliuswwj/syweb.git`
 7. 运行syweb\main.py
 8. 在手机上访问网站 `http://IP` IP是VOD系统的内部IP
 
