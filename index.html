@@ -1,0 +1,190 @@
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js></script>
+<script src=https://cdn.jsdelivr.net/npm/sorttable@1.0.2/sorttable.min.js></script>
+
+<style>
+table.sortable {
+    width: 100%;
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+table.sortable th,td {
+    border: 1px solid black;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+table.sortable thead {
+    background-color:#eee;
+    color:#666666;
+    font-weight: bold;
+    cursor: default;
+}
+
+#content {
+    overflow:auto;
+}
+
+div.nav input {
+    padding: 6px;
+}
+
+div.nav ul {
+    padding: 0;
+    margin: 0;        
+    list-style-type: none;
+    user-select:none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select:none;
+    -o-user-select:none;
+}
+
+div.nav ul li {
+    color: #FFF;
+    padding: 4px;
+    font-size: 16px;
+    border-right: 2px #FFF solid;
+    border-bottom: 1px #FFF solid;
+    float:left;
+    background-color:#335A7F;
+    width: 70px;
+}
+
+div.nav ul li a {
+    color: #FFF;
+    text-decoration: none;
+}
+ 
+div.nav li:hover {
+    background-color: #4C88BF; 
+}
+	
+div.nav ul li ul { 
+    display:none; 
+}
+ 
+div.nav ul li:hover ul {
+    display: list-item;
+    position: absolute;
+    margin-top: 10px;
+    margin-left: -6px;
+}
+ 
+div.nav ul li:hover ul li {
+    float:none;
+}
+
+div.nav ul li ul li:hover {
+    float:none;
+    background-color: #66B5FF; 
+}
+
+li.more:after {
+    content: "\00BB";
+    float: right;
+    margin-right: 2px;
+}
+</style>
+<script>
+
+function query(key) {
+    $("#content").load('/content/' + key, function() {
+        forEach(document.getElementsByTagName('table'), function(table) {
+            if (table.className.search(/\bsortable\b/) != -1) {
+                sorttable.makeSortable(table);
+            }
+         });
+    });
+}
+
+function call(data, callback=null) {
+    const xmlhttp = new XMLHttpRequest();
+    xmlhttp.onload = callback
+    xmlhttp.open("POST", "/call");
+    xmlhttp.send(data);
+}
+
+function control(key) {
+    call('?,' + key);
+}
+
+function runQ(id) {
+    call('*,' + id);
+}
+
+function runD(id, song) {
+    if (confirm('确定下载 ' + song + ' 吗？ 即将扣除一个点数')) {
+        call('D,' + id);
+    }
+}
+
+function go(key) {
+    window.location.href = '/?q=' + key + '&rnd=' + Math.random();
+}
+
+function golist() {
+    setTimeout(function(){
+        go('.list');
+    }, 500);
+}
+
+function runT(id) {
+    call('+,' + id, golist);
+}
+
+function runX(id) {
+    call('-,' + id, golist);
+}
+
+window.addEventListener('load', (event) => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const q = urlParams.get("q");
+    query(q != null ? q : '.local');
+    $("#content").css('height', window.innerHeight-$(".nav").height()-16);
+});
+
+</script>
+</head>
+<body>
+<div class="nav" unselectable="on" onselectstart="return false;">
+    <ul>
+        <li class="more">歌曲
+            <ul>
+                <!--MLIST-->
+            </ul>
+        </li>
+        <li class="more">歌手
+            <ul>
+                <!--SLIST-->
+            </ul>
+        </li>
+        <li class="more">控制
+        <ul>
+            <li onclick="go('.list')">播放列表</li>
+            <li onclick="control('D')">音量+</li>
+            <li onclick="control('E')">音量-</li>
+            <li onclick="control('A')">原声/伴奏</li>
+            <li onclick="control('B')">暂停/恢复</li>
+            <li onclick="control('C')">下一曲</li>
+            <li onclick="control('F')">重放</li>
+            <li onclick="control('H')">点赞</li>
+            <li onclick="control('I')">比心</li>
+            <li onclick="control('J')">倒彩</li>
+            <li onclick="control('K')">不屑</li>
+        </ul>
+        </li>
+        <input type=text size=8 oninput="query(this.value);" />
+    </ul>
+    <br>
+</div>
+
+<div id="content">Loading...</div>
+
+</body>
+
+</html>
