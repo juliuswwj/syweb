@@ -84,7 +84,7 @@ idxLocalID = 0
 idxFileName = 0
 
 def UpdateLocal():
-    global colSongs, rowSongs, idxSINGER, idxSONGNAME, idxLocalID, idxFileName
+    global colSongs, rowSongs, idxSINGER, idxSONGNAME, idxSongLANG, idxLocalID, idxFileName
 
     # extend    
     if idxLocalID == 0:
@@ -93,10 +93,10 @@ def UpdateLocal():
         colSongs.extend(['LocalID', 'FileName'])
         for row in rowSongs: row.extend([0, ''])
 
-    # make {SINGER_SONGNAME -> idx}
+    # make {SINGER-SONGNAME-SongLANG -> idx}
     sidx = {}
     for n, row in enumerate(rowSongs):
-        k = '%s-%s' % (row[idxSINGER], row[idxSONGNAME])
+        k = '%s-%s-%s' % (row[idxSINGER], row[idxSONGNAME], row[idxSongLANG])
         if k in sidx:
             sidx[k].add(n)
         else:
@@ -106,10 +106,11 @@ def UpdateLocal():
     iSONGNAME = cols.index('SONGNAME')
     iSINGER = cols.index('SINGER')
     iSongID = cols.index('SongID')
+    iSongLANG = cols.index('SongLANG')
     iFileName = cols.index('FileName')
 
     for row in rows:
-        k = '%s-%s' % (row[iSINGER], row[iSONGNAME])
+        k = '%s-%s-%s' % (row[iSINGER], row[iSONGNAME], row[iSongLANG])
         nset = sidx.get(k, None)
         if not nset: continue
         for n in nset:
@@ -151,7 +152,7 @@ def SongTable(filter):
     rows = []
     for r in rowSongs:
         if filter(r): rows.append(r)
-        if len(rows) >= 300: break
+        if len(rows) >= 1500: break
     if len(rows) == 0: return ''
     rows.sort(key=lambda r: -r[idxDownLoadCount])
 
@@ -160,7 +161,7 @@ def SongTable(filter):
     for r in rows:
         table += '<tr><td>'
         if r[idxLocalID] > 0:
-            table += spanRun('Q', r[idxLocalID])
+            table += spanRun('Q', r[idxLocalID], r[idxSONGNAME])
         else:
             table += spanRun('D', r[idxSongID], r[idxSONGNAME])
         table += '</td>'
@@ -175,7 +176,7 @@ def SongTable(filter):
         table += '<td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td>' % (r[idxSONGNAME], ' '.join(ss), lang(r), type(r), r[idxDownLoadCount])
         table += '</tr>\n'
 
-    table += '</table>\n'
+    table += '</table><br><font size=-1>共<font color=green>%d</font>首</font>\n' % len(rows)
     return table
 
 def PlayTable(playlist):

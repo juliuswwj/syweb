@@ -76,7 +76,7 @@ async def httpContent(req):
     elif isalpha(q):
         q = q.upper()
         singerFilter = lambda r: q in r[db.idxSpell]
-        songFilter = lambda r: q in r[db.idxspell]
+        songFilter = lambda r: q in r[db.idxspell] or q in r[db.idxSONGNAME].upper()
     
     else:
         singerFilter = lambda r: q in r[db.idxSingerName]
